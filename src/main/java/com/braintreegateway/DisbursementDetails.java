@@ -9,7 +9,7 @@ public final class DisbursementDetails {
     private final String settlementCurrencyIsoCode;
     private final boolean fundsHeld;
     private final boolean success;
-    private final BigDecimal settlementCurrencyExchangeRate;
+    private final BigDecimal settlementCurrencyXR;
     private final BigDecimal settlementAmount;
 
     public DisbursementDetails(NodeWrapper node) {
@@ -17,7 +17,7 @@ public final class DisbursementDetails {
         settlementCurrencyIsoCode = node.findString("settlement-currency-iso-code");
         fundsHeld = node.findBoolean("funds-held");
         success = node.findBoolean("success");
-        settlementCurrencyExchangeRate = node.findBigDecimal("settlement-currency-exchange-rate");
+        settlementCurrencyXR = node.findBigDecimal("settlement-currency-exchange-rate");
         settlementAmount = node.findBigDecimal("settlement-amount");
     }
 
@@ -38,7 +38,7 @@ public final class DisbursementDetails {
     }
 
     public BigDecimal getSettlementCurrencyExchangeRate() {
-        return settlementCurrencyExchangeRate;
+        return settlementCurrencyXR;
     }
 
     public BigDecimal getSettlementAmount() {
