@@ -2,6 +2,8 @@ package com.braintreegateway;
 
 import com.braintreegateway.exceptions.ConfigurationException;
 import com.braintreegateway.util.ClientLibraryProperties;
+import com.braintreegateway.util.Sha1Hasher;
+
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.logging.Level;
@@ -154,5 +156,9 @@ public class Configuration {
 
     public void setConnectTimeout(Integer timeout) {
         this.connectTimeout = timeout;
+    }
+
+    public String getFormat(String stringToSign) {
+        return String.format("%s|%s", getPublicKey(), new Sha1Hasher().hmacHash(getPrivateKey(), stringToSign));
     }
 }

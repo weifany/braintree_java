@@ -33,7 +33,7 @@ public class WebhookTestingGateway {
     }
 
     private String publicKeySignaturePair(String stringToSign) {
-        return String.format("%s|%s", configuration.getPublicKey(), new Sha1Hasher().hmacHash(configuration.getPrivateKey(), stringToSign));
+        return configuration.getFormat(stringToSign);
     }
 
     public HashMap<String, String> sampleNotification(WebhookNotification.Kind kind, String id) {
