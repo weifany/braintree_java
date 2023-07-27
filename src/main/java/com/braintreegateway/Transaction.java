@@ -251,82 +251,9 @@ public class Transaction {
         merchantAccountId = node.findString("merchant-account-id");
         orderId = node.findString("order-id");
         scaExemptionRequested = EnumUtils.findByName(ScaExemption.class, node.findString("sca-exemption-requested"), null);
-        NodeWrapper billingAddressNode = node.findFirst("billing");
-        if (billingAddressNode != null) {
-            billingAddress = new Address(billingAddressNode);
-        }
-        NodeWrapper creditCardNode = node.findFirst("credit-card");
-        if (creditCardNode != null) {
-            creditCard = new CreditCard(creditCardNode);
-        }
-        NodeWrapper networkTokenNode = node.findFirst("network-token");
-        if (networkTokenNode != null) {
-            networkToken = new CreditCard(networkTokenNode);
-        }
-        NodeWrapper customerNode = node.findFirst("customer");
-        if (customerNode != null) {
-            customer = new Customer(customerNode);
-        }
-        NodeWrapper disbursementDetailsNode = node.findFirst("disbursement-details");
-        if (disbursementDetailsNode != null) {
-            disbursementDetails = new DisbursementDetails(disbursementDetailsNode);
-        }
-        NodeWrapper descriptorNode = node.findFirst("descriptor");
-        if (descriptorNode != null) {
-            descriptor = new Descriptor(descriptorNode);
-        }
-        NodeWrapper paypalNode = node.findFirst("paypal");
-        if (paypalNode != null) {
-            paypalDetails = new PayPalDetails(paypalNode);
-        }
-        NodeWrapper paypalHereNode = node.findFirst("paypal-here");
-        if (paypalHereNode != null) {
-            paypalHereDetails = new PayPalHereDetails(paypalHereNode);
-        }
-        NodeWrapper applePayNode = node.findFirst("apple-pay");
-        if (applePayNode != null) {
-            applePayDetails = new ApplePayDetails(applePayNode);
-        }
-        NodeWrapper androidPayCardNode = node.findFirst("android-pay-card");
-        if (androidPayCardNode != null) {
-            androidPayDetails = new AndroidPayDetails(androidPayCardNode);
-        }
-        NodeWrapper amexExpressCheckoutCardNode = node.findFirst("amex-express-checkout-card");
-        if (amexExpressCheckoutCardNode != null) {
-            amexExpressCheckoutDetails = new AmexExpressCheckoutDetails(amexExpressCheckoutCardNode);
-        }
-        NodeWrapper sepaDirectDebitAccountNode = node.findFirst("sepa-debit-account-detail");
-        if (sepaDirectDebitAccountNode != null) {
-            sepaDirectDebitAccountDetails = new SepaDirectDebitAccountDetails(sepaDirectDebitAccountNode);
-        }
-        NodeWrapper venmoAccountNode = node.findFirst("venmo-account");
-        if (venmoAccountNode != null) {
-            venmoAccountDetails = new VenmoAccountDetails(venmoAccountNode);
-        }
-        NodeWrapper usBankAccountNode = node.findFirst("us-bank-account");
-        if (usBankAccountNode != null) {
-            usBankAccountDetails = new UsBankAccountDetails(usBankAccountNode);
-        }
-        NodeWrapper localPaymentNode = node.findFirst("local-payment");
-        if (localPaymentNode != null) {
-            localPaymentDetails = new LocalPaymentDetails(localPaymentNode);
-        }
-        NodeWrapper visaCheckoutCardNode = node.findFirst("visa-checkout-card");
-        if (visaCheckoutCardNode != null) {
-            visaCheckoutCardDetails = new VisaCheckoutCardDetails(visaCheckoutCardNode);
-        }
-        NodeWrapper masterpassCardNode = node.findFirst("masterpass-card");
-        if (masterpassCardNode != null) {
-            masterpassCardDetails = new MasterpassCardDetails(masterpassCardNode);
-        }
-        NodeWrapper samsungPayCardNode = node.findFirst("samsung-pay-card");
-        if (samsungPayCardNode != null) {
-            samsungPayCardDetails = new SamsungPayCardDetails(samsungPayCardNode);
-        }
-        NodeWrapper customActionsPaymentMethodNode = node.findFirst("custom-actions-payment-method");
-        if (customActionsPaymentMethodNode != null) {
-            customActionsPaymentMethodDetails = new CustomActionsPaymentMethodDetails(customActionsPaymentMethodNode);
-        }
+        
+        extractedFirstNodeInfo(node);
+        
         achReturnCode = node.findString("ach-return-code");
         sepaDirectDebitReturnCode = node.findString("sepa-direct-debit-return-code");
         planId = node.findString("plan-id");
@@ -347,32 +274,9 @@ public class Transaction {
         recurring = node.findBoolean("recurring");
         refundedTransactionId = node.findString("refunded-transaction-id");
         refundId = node.findString("refund-id");
+        
+        extractOtherInformation(node);
 
-        NodeWrapper riskDataNode = node.findFirst("risk-data");
-        if (riskDataNode != null) {
-            riskData = new RiskData(riskDataNode);
-        }
-
-        NodeWrapper threeDSecureInfoNode = node.findFirst("three-d-secure-info");
-        if (threeDSecureInfoNode != null && !threeDSecureInfoNode.isBlank()) {
-            threeDSecureInfo = new ThreeDSecureInfo(threeDSecureInfoNode);
-        }
-
-        serviceFeeAmount = node.findBigDecimal("service-fee-amount");
-        settlementBatchId = node.findString("settlement-batch-id");
-
-        NodeWrapper shippingAddressNode = node.findFirst("shipping");
-        if (shippingAddressNode != null) {
-            shippingAddress = new Address(shippingAddressNode);
-        }
-
-        status = EnumUtils.findByName(Status.class, node.findString("status"), Status.UNRECOGNIZED);
-
-        NodeWrapper subscriptionNode = node.findFirst("subscription");
-        if (subscriptionNode != null) {
-            subscriptionDetails = new SubscriptionDetails(subscriptionNode);
-            subscription = new Subscription(subscriptionNode);
-        }
         subscriptionId = node.findString("subscription-id");
         taxAmount = node.findBigDecimal("tax-amount");
         taxExempt = node.findBoolean("tax-exempt");
@@ -382,53 +286,7 @@ public class Transaction {
         type = EnumUtils.findByName(Type.class, node.findString("type"), Type.UNRECOGNIZED);
         updatedAt = node.findDateTime("updated-at");
 
-        refundIds = new ArrayList<String>();
-        for (NodeWrapper refundIdNode : node.findAll("refund-ids/item")) {
-            refundIds.add(refundIdNode.findString("."));
-        }
-
-        retrievalReferenceNumber = node.findString("retrieval-reference-number");
-
-        acquirerReferenceNumber = node.findString("acquirer-reference-number");
-
-        statusHistory = new ArrayList<StatusEvent>();
-        for (NodeWrapper statusNode : node.findAll("status-history/status-event")) {
-            statusHistory.add(new StatusEvent(statusNode));
-        }
-
-        achReturnResponses = new ArrayList<AchReturnResponse>();
-        for (NodeWrapper statusNode : node.findAll("ach-return-responses/ach-return-response")) {
-            achReturnResponses.add(new AchReturnResponse(statusNode));
-        }
-
-        addOns = new ArrayList<AddOn>();
-        for (NodeWrapper addOnResponse : node.findAll("add-ons/add-on")) {
-            addOns.add(new AddOn(addOnResponse));
-        }
-
-        discounts = new ArrayList<Discount>();
-        for (NodeWrapper discountResponse : node.findAll("discounts/discount")) {
-            discounts.add(new Discount(discountResponse));
-        }
-
-        disputes = new ArrayList<Dispute>();
-        for (NodeWrapper dispute : node.findAll("disputes/dispute")) {
-            disputes.add(new Dispute(dispute));
-        }
-
-        paymentInstrumentType = node.findString("payment-instrument-type");
-
-        authorizedTransactionId = node.findString("authorized-transaction-id");
-
-        partialSettlementTransactionIds = new ArrayList<String>();
-        for (NodeWrapper partialSettlementTransactionIdNode : node.findAll("partial-settlement-transaction-ids/*")) {
-            partialSettlementTransactionIds.add(partialSettlementTransactionIdNode.findString("."));
-        }
-
-        authorizationAdjustments = new ArrayList<AuthorizationAdjustment>();
-        for (NodeWrapper authorizationAdjustmentNode : node.findAll("authorization-adjustments/authorization-adjustment")) {
-            authorizationAdjustments.add(new AuthorizationAdjustment(authorizationAdjustmentNode));
-        }
+        updateNode(node);
 
         NodeWrapper facilitatedDetailsNode = node.findFirst("facilitated-details");
         if (facilitatedDetailsNode != null) {
@@ -448,12 +306,12 @@ public class Transaction {
 
         installments = new ArrayList<Installment>();
         for (NodeWrapper installmentsNode : node.findAll("installments/installment")) {
-          installments.add(new Installment(installmentsNode));
+            installments.add(new Installment(installmentsNode));
         }
 
         refundedInstallments = new ArrayList<Installment>();
         for (NodeWrapper installmentsNode : node.findAll("refunded-installments/refunded-installment")) {
-          refundedInstallments.add(new Installment(installmentsNode));
+            refundedInstallments.add(new Installment(installmentsNode));
         }
 
         retried = node.findBoolean("retried");
@@ -466,6 +324,277 @@ public class Transaction {
         retriedTransactionId = node.findString("retried-transaction-id");
     }
 
+
+    private void extractedFirstNodeInfo(NodeWrapper node ) {
+        initBillingAddress(node);
+        initCreditCard(node);
+        initNetworkToken(node);
+        initCustom(node);
+        initDisbursementDetail(node);
+        initDescriptor(node);
+        initPaypal(node);
+        initPaypalHere(node);
+        initApplePay(node);
+        initAndroidPayCard(node);
+        initAmexExpressCheckout(node);
+        initSepaDirDebitAccount(node);
+        initVenmoAccount(node);
+        initUsBankAccount(node);
+        initLocalPayment(node);
+        initVisaCheckout(node);
+        initMasterPassCard(node);
+        initSamsunPayCard(node);
+        initCustActionPay(node);
+    }
+    
+    private void initBillingAddress(NodeWrapper node) {
+        NodeWrapper billingAddressNode = node.findFirst("billing");
+        if (billingAddressNode != null) {
+            billingAddress = new Address(billingAddressNode);
+        }
+    }
+
+
+    private void initCreditCard(NodeWrapper node) {
+        NodeWrapper creditCardNode = node.findFirst("credit-card");
+        if (creditCardNode != null) {
+            creditCard = new CreditCard(creditCardNode);
+        }
+    }
+
+    private void initNetworkToken(NodeWrapper node) {
+        NodeWrapper networkTokenNode = node.findFirst("network-token");
+        if (networkTokenNode != null) {
+            networkToken = new CreditCard(networkTokenNode);
+        }
+    }
+
+    private void initCustom(NodeWrapper node) {
+        NodeWrapper customerNode = node.findFirst("customer");
+        if (customerNode != null) {
+            customer = new Customer(customerNode);
+        }
+    }
+
+    private void initDisbursementDetail(NodeWrapper node) {
+        NodeWrapper disbursementDetailsNode = node.findFirst("disbursement-details");
+        if (disbursementDetailsNode != null) {
+            disbursementDetails = new DisbursementDetails(disbursementDetailsNode);
+        }
+    }
+
+    private void initDescriptor(NodeWrapper node) {
+        NodeWrapper descriptorNode = node.findFirst("descriptor");
+        if (descriptorNode != null) {
+            descriptor = new Descriptor(descriptorNode);
+        }
+    }
+
+    private void initPaypal(NodeWrapper node) {
+        NodeWrapper paypalNode = node.findFirst("paypal");
+        if (paypalNode != null) {
+            paypalDetails = new PayPalDetails(paypalNode);
+        }
+    }
+
+    private void initPaypalHere(NodeWrapper node) {
+        NodeWrapper paypalHereNode = node.findFirst("paypal-here");
+        if (paypalHereNode != null) {
+            paypalHereDetails = new PayPalHereDetails(paypalHereNode);
+        }
+    }
+
+    private void initApplePay(NodeWrapper node) {
+        NodeWrapper applePayNode = node.findFirst("apple-pay");
+        if (applePayNode != null) {
+            applePayDetails = new ApplePayDetails(applePayNode);
+        }
+    }
+
+    private void initAndroidPayCard(NodeWrapper node) {
+        NodeWrapper androidPayCardNode = node.findFirst("android-pay-card");
+        if (androidPayCardNode != null) {
+            androidPayDetails = new AndroidPayDetails(androidPayCardNode);
+        }
+    }
+    private void initSepaDirDebitAccount(NodeWrapper node) {
+        NodeWrapper sepaDirectDebitAccountNode = node.findFirst("sepa-debit-account-detail");
+        if (sepaDirectDebitAccountNode != null) {
+            sepaDirectDebitAccountDetails = new SepaDirectDebitAccountDetails(sepaDirectDebitAccountNode);
+        }
+    }
+
+    private void initVenmoAccount(NodeWrapper node) {
+        NodeWrapper venmoAccountNode = node.findFirst("venmo-account");
+        if (venmoAccountNode != null) {
+            venmoAccountDetails = new VenmoAccountDetails(venmoAccountNode);
+        }
+    }
+
+    private void initUsBankAccount(NodeWrapper node) {
+        NodeWrapper usBankAccountNode = node.findFirst("us-bank-account");
+        if (usBankAccountNode != null) {
+            usBankAccountDetails = new UsBankAccountDetails(usBankAccountNode);
+        }
+    }
+
+    private void initVisaCheckout(NodeWrapper node) {
+        NodeWrapper visaCheckoutCardNode = node.findFirst("visa-checkout-card");
+        if (visaCheckoutCardNode != null) {
+            visaCheckoutCardDetails = new VisaCheckoutCardDetails(visaCheckoutCardNode);
+        }
+    }
+
+    private void initMasterPassCard(NodeWrapper node) {
+        NodeWrapper masterpassCardNode = node.findFirst("masterpass-card");
+        if (masterpassCardNode != null) {
+            masterpassCardDetails = new MasterpassCardDetails(masterpassCardNode);
+        }
+    }
+
+    private void initSamsunPayCard(NodeWrapper node) {
+        NodeWrapper samsungPayCardNode = node.findFirst("samsung-pay-card");
+        if (samsungPayCardNode != null) {
+            samsungPayCardDetails = new SamsungPayCardDetails(samsungPayCardNode);
+        }
+    }
+    private void initCustActionPay(NodeWrapper node) {
+        NodeWrapper customActionsPaymentMethodNode = node.findFirst("custom-actions-payment-method");
+        if (customActionsPaymentMethodNode != null) {
+            customActionsPaymentMethodDetails = new CustomActionsPaymentMethodDetails(customActionsPaymentMethodNode);
+        }
+    }
+
+
+    private void extractOtherInformation(NodeWrapper node){
+        initRiskData(node);
+
+        initThreeDSecureInfo(node);
+
+        serviceFeeAmount = node.findBigDecimal("service-fee-amount");
+        settlementBatchId = node.findString("settlement-batch-id");
+
+        initShippingAddress(node);
+
+        status = EnumUtils.findByName(Status.class, node.findString("status"), Status.UNRECOGNIZED);
+
+        initSubscription(node);
+    }
+
+    private void initRiskData(NodeWrapper node) {
+        NodeWrapper riskDataNode = node.findFirst("risk-data");
+        if (riskDataNode != null) {
+            riskData = new RiskData(riskDataNode);
+        }
+    }
+
+    private void initThreeDSecureInfo(NodeWrapper node) {
+        NodeWrapper threeDSecureInfoNode = node.findFirst("three-d-secure-info");
+        if (threeDSecureInfoNode != null && !threeDSecureInfoNode.isBlank()) {
+            threeDSecureInfo = new ThreeDSecureInfo(threeDSecureInfoNode);
+        }
+    }
+
+    private void initShippingAddress(NodeWrapper node) {
+        NodeWrapper shippingAddressNode = node.findFirst("shipping");
+        if (shippingAddressNode != null) {
+            shippingAddress = new Address(shippingAddressNode);
+        }
+    }
+
+    private void initSubscription(NodeWrapper node) {
+        NodeWrapper subscriptionNode = node.findFirst("subscription");
+        if (subscriptionNode != null) {
+            subscriptionDetails = new SubscriptionDetails(subscriptionNode);
+            subscription = new Subscription(subscriptionNode);
+        }
+    }
+
+    private void initAmexExpressCheckout(NodeWrapper node) {
+        NodeWrapper amexExpressCheckoutCardNode = node.findFirst("amex-express-checkout-card");
+        if (amexExpressCheckoutCardNode != null) {
+            amexExpressCheckoutDetails = new AmexExpressCheckoutDetails(amexExpressCheckoutCardNode);
+        }
+    }
+
+    private void initLocalPayment(NodeWrapper node) {
+        NodeWrapper localPaymentNode = node.findFirst("local-payment");
+        if (localPaymentNode != null) {
+            localPaymentDetails = new LocalPaymentDetails(localPaymentNode);
+        }
+    }
+
+    private void updateNode(NodeWrapper node) {
+        updateRefundId(node);
+        retrievalReferenceNumber = node.findString("retrieval-reference-number");
+        acquirerReferenceNumber = node.findString("acquirer-reference-number");
+        updateStatusHistory(node);
+        updateAchReturnResp(node);
+        updateAddOns(node);
+        updateDiscount(node);
+        updateDispute(node);
+        paymentInstrumentType = node.findString("payment-instrument-type");
+        authorizedTransactionId = node.findString("authorized-transaction-id");
+        updatePartialSettleTransIds(node);
+        updateAuthAdjust(node);
+    }
+    private void updateRefundId(NodeWrapper node) {
+        refundIds = new ArrayList<String>();
+        for (NodeWrapper refundIdNode : node.findAll("refund-ids/item")) {
+            refundIds.add(refundIdNode.findString("."));
+        }
+    }
+    private void updateStatusHistory(NodeWrapper node) {
+        statusHistory = new ArrayList<StatusEvent>();
+        for (NodeWrapper statusNode : node.findAll("status-history/status-event")) {
+            statusHistory.add(new StatusEvent(statusNode));
+        }
+    }
+
+
+    private void updateAchReturnResp(NodeWrapper node) {
+        achReturnResponses = new ArrayList<AchReturnResponse>();
+        for (NodeWrapper statusNode : node.findAll("ach-return-responses/ach-return-response")) {
+            achReturnResponses.add(new AchReturnResponse(statusNode));
+        }
+    }
+
+    private void updateAddOns(NodeWrapper node) {
+        addOns = new ArrayList<AddOn>();
+        for (NodeWrapper addOnResponse : node.findAll("add-ons/add-on")) {
+            addOns.add(new AddOn(addOnResponse));
+        }
+    }
+
+    private void updateDiscount(NodeWrapper node) {
+        discounts = new ArrayList<Discount>();
+        for (NodeWrapper discountResponse : node.findAll("discounts/discount")) {
+            discounts.add(new Discount(discountResponse));
+        }
+    }
+
+    private void updateDispute(NodeWrapper node) {
+        disputes = new ArrayList<Dispute>();
+        for (NodeWrapper dispute : node.findAll("disputes/dispute")) {
+            disputes.add(new Dispute(dispute));
+        }
+    }
+
+
+    private void updatePartialSettleTransIds(NodeWrapper node) {
+        partialSettlementTransactionIds = new ArrayList<String>();
+        for (NodeWrapper partialSettlementTransactionIdNode : node.findAll("partial-settlement-transaction-ids/*")) {
+            partialSettlementTransactionIds.add(partialSettlementTransactionIdNode.findString("."));
+        }
+    }
+
+    private void updateAuthAdjust(NodeWrapper node) {
+        authorizationAdjustments = new ArrayList<AuthorizationAdjustment>();
+        for (NodeWrapper authorizationAdjustmentNode : node.findAll("authorization-adjustments/authorization-adjustment")) {
+            authorizationAdjustments.add(new AuthorizationAdjustment(authorizationAdjustmentNode));
+        }
+    }
+    
     public List<AddOn> getAddOns() {
         return addOns;
     }
