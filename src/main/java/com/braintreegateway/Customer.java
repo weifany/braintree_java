@@ -44,54 +44,106 @@ public class Customer {
         phone = node.findString("phone");
         updatedAt = node.findDateTime("updated-at");
         website = node.findString("website");
+        initCreditCards(node);
+        initPaypalAcc(node);
+        initApplePayCards(node);
+        initAndroidPayCards(node);
+        initAmexExprCheckoutCards(node);
+        initVenmoAcc(node);
+        initVisaCheckoutCards(node);
+        initMasterpassCards(node);
+        initUsBankAcc(node);
+        initSepaDirectDebitAcc(node);
+        initSamsungPayCard(node);
+        initCustActionPayment(node);
+        initAddresses(node);
+    }
+
+    private void initCreditCards(NodeWrapper node) {
         creditCards = new ArrayList<CreditCard>();
         for (NodeWrapper creditCardResponse : node.findAll("credit-cards/credit-card")) {
             creditCards.add(new CreditCard(creditCardResponse));
         }
+    }
+
+    private void initPaypalAcc(NodeWrapper node) {
         paypalAccounts = new ArrayList<PayPalAccount>();
         for (NodeWrapper paypalResponse : node.findAll("paypal-accounts/paypal-account")) {
             paypalAccounts.add(new PayPalAccount(paypalResponse));
         }
+    }
+
+    private void initApplePayCards(NodeWrapper node) {
         applePayCards = new ArrayList<ApplePayCard>();
         for (NodeWrapper applePayCardResponse : node.findAll("apple-pay-cards/apple-pay-card")) {
             applePayCards.add(new ApplePayCard(applePayCardResponse));
         }
+    }
+
+    private void initAndroidPayCards(NodeWrapper node) {
         androidPayCards = new ArrayList<AndroidPayCard>();
         for (NodeWrapper androidPayCardResponse : node.findAll("android-pay-cards/android-pay-card")) {
             androidPayCards.add(new AndroidPayCard(androidPayCardResponse));
         }
+    }
+
+    private void initAmexExprCheckoutCards(NodeWrapper node) {
         amexExpressCheckoutCards = new ArrayList<AmexExpressCheckoutCard>();
         for (NodeWrapper amexExpressCheckoutCardResponse : node.findAll("amex-express-checkout-cards/amex-express-checkout-card")) {
             amexExpressCheckoutCards.add(new AmexExpressCheckoutCard(amexExpressCheckoutCardResponse));
         }
+    }
+
+    private void initVenmoAcc(NodeWrapper node) {
         venmoAccounts = new ArrayList<VenmoAccount>();
         for (NodeWrapper venmoAccountResponse : node.findAll("venmo-accounts/venmo-account")) {
             venmoAccounts.add(new VenmoAccount(venmoAccountResponse));
         }
+    }
+
+    private void initVisaCheckoutCards(NodeWrapper node) {
         visaCheckoutCards = new ArrayList<VisaCheckoutCard>();
         for (NodeWrapper visaCheckoutCardResponse : node.findAll("visa-checkout-cards/visa-checkout-card")) {
             visaCheckoutCards.add(new VisaCheckoutCard(visaCheckoutCardResponse));
         }
+    }
+
+    private void initMasterpassCards(NodeWrapper node) {
         masterpassCards = new ArrayList<MasterpassCard>();
         for (NodeWrapper masterpassCardResponse : node.findAll("masterpass-cards/masterpass-card")) {
             masterpassCards.add(new MasterpassCard(masterpassCardResponse));
         }
+    }
+
+    private void initUsBankAcc(NodeWrapper node) {
         usBankAccounts = new ArrayList<UsBankAccount>();
         for (NodeWrapper usBankAccountResponse : node.findAll("us-bank-accounts/us-bank-account")) {
             usBankAccounts.add(new UsBankAccount(usBankAccountResponse));
         }
+    }
+
+    private void initSepaDirectDebitAcc(NodeWrapper node) {
         sepaDirectDebitAccounts = new ArrayList<SepaDirectDebitAccount>();
         for (NodeWrapper sepaDirectDebitAccountResponse : node.findAll("sepa-debit-accounts/sepa-debit-account")) {
             sepaDirectDebitAccounts.add(new SepaDirectDebitAccount(sepaDirectDebitAccountResponse));
         }
+    }
+
+    private void initSamsungPayCard(NodeWrapper node) {
         samsungPayCards = new ArrayList<SamsungPayCard>();
         for (NodeWrapper samsungPayCardResponse : node.findAll("samsung-pay-cards/samsung-pay-card")) {
             samsungPayCards.add(new SamsungPayCard(samsungPayCardResponse));
         }
+    }
+
+    private void initCustActionPayment(NodeWrapper node) {
         customActionsPaymentMethods = new ArrayList<CustomActionsPaymentMethod>();
         for (NodeWrapper customActionsPaymentMethodResponse : node.findAll("custom-actions-payment-methods/custom-actions-payment-method")) {
             customActionsPaymentMethods.add(new CustomActionsPaymentMethod(customActionsPaymentMethodResponse));
         }
+    }
+
+    private void initAddresses(NodeWrapper node) {
         addresses = new ArrayList<Address>();
         for (NodeWrapper addressResponse : node.findAll("addresses/address")) {
             addresses.add(new Address(addressResponse));
