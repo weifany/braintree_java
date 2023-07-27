@@ -36,8 +36,6 @@ public class OAuthGateway {
     }
 
     public String connectUrl(OAuthConnectUrlRequest request) {
-        request.clientId(configuration.getClientId());
-        String queryString = request.toQueryString();
-        return configuration.getBaseURL() + "/oauth/connect?" + queryString;
+        return configuration.getUrlString(request);
     }
 }

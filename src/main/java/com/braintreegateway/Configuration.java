@@ -161,4 +161,10 @@ public class Configuration {
     public String getFormat(String stringToSign) {
         return String.format("%s|%s", getPublicKey(), new Sha1Hasher().hmacHash(getPrivateKey(), stringToSign));
     }
+
+    public String getUrlString(OAuthConnectUrlRequest request) {
+        request.clientId(getClientId());
+        String queryString = request.toQueryString();
+        return getBaseURL() + "/oauth/connect?" + queryString;
+    }
 }
